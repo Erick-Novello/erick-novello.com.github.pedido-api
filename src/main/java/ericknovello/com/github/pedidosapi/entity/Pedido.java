@@ -1,22 +1,16 @@
 package ericknovello.com.github.pedidosapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 public class Pedido implements Serializable {
@@ -113,9 +107,9 @@ public class Pedido implements Serializable {
     public BigDecimal getValorTotal() {
         BigDecimal soma = BigDecimal.ZERO;
 
-        for (ItemPedido ip : itens)
-            soma = soma.plus(ip.getSubTotal());
-
+        for (ItemPedido ip : itens) {
+            soma = soma.add(ip.getSubTotal());
+        }
         return soma;
 
     }
@@ -135,6 +129,23 @@ public class Pedido implements Serializable {
         } else if (!id.equals(other.id))
             return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        StringBuffer sb = new StringBuffer();
+        sb.append("Pedido Número: " + getId())
+                .append(", Instante: " + simpleDateFormat.format(getInstante()))
+                .append(", Cliente: " + getCliente().getNome())
+                .append(", Situação do pagamento: " + getPagamento().getEstado().getDescricao())
+                .append("\nDetalhes:\n");
+        for (ItemPedido ip : getItens()) {
+            sb.append(ip.toString());
+        }
+        sb.append(", Valor total: " + numberFormat.format(getValorTotal()));
+        return sb.toString();
     }
 
 }

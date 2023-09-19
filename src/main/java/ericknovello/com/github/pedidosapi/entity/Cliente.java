@@ -1,27 +1,16 @@
 package ericknovello.com.github.pedidosapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import ericknovello.com.github.pedidosapi.enums.Perfil;
+import ericknovello.com.github.pedidosapi.enums.TipoCliente;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import ericknovello.com.github.pedidosapi.enums.Perfil;
-import ericknovello.com.github.pedidosapi.enums.TipoCliente;
 
 @Entity
 public class Cliente implements Serializable {
@@ -54,6 +43,10 @@ public class Cliente implements Serializable {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "PERFIS")
     private Set<Integer> perfis = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "cliente")
+    private List<Pedido> pedidos = new ArrayList<>();
 
     private String imageUrl;
 
@@ -138,15 +131,21 @@ public class Cliente implements Serializable {
 
     public Set<Perfil> getPerfis() {
         return perfis.stream()
-        .map(m -> Perfil.toEnum(m))
-        .collect(Collectors.toSet());
+                .map(m -> Perfil.toEnum(m))
+                .collect(Collectors.toSet());
     }
 
     public void addPerfi(Perfil perfil) {
         this.perfis.add(perfil.getCodigo());
     }
 
-    
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+
+    public void setPedidos(List<Pedido> pedidos) {
+        this.pedidos = pedidos;
+    }
 
     public String getImageUrl() {
         return imageUrl;

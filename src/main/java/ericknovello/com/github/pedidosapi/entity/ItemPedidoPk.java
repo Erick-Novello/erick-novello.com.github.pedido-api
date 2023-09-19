@@ -1,9 +1,8 @@
 package ericknovello.com.github.pedidosapi.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
 public class ItemPedidoPk implements Serializable {
 
@@ -64,7 +63,4 @@ public class ItemPedidoPk implements Serializable {
         return true;
     }
 
-    
-
-    
 }

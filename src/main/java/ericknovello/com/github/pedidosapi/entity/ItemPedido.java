@@ -1,16 +1,13 @@
 package ericknovello.com.github.pedidosapi.entity;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 @Entity
 public class ItemPedido implements Serializable {
@@ -38,9 +35,9 @@ public class ItemPedido implements Serializable {
         this.preco = preco;
     }
 
-    public BigDecimal getSubTotal(){
+    public BigDecimal getSubTotal() {
         return (preco.subtract(desconto))
-            .multiply(BigDecimal.valueOf(quantidade));
+                .multiply(BigDecimal.valueOf(quantidade));
     }
 
     @JsonIgnore
@@ -52,11 +49,11 @@ public class ItemPedido implements Serializable {
         id.setPedido(pedido);
     }
 
-    public Produto geProduto(){
+    public Produto getProduto() {
         return this.id.getProduto();
     }
 
-    public void setProduto(Produto produto){
+    public void setProduto(Produto produto) {
         id.setProduto(produto);
     }
 
@@ -92,4 +89,32 @@ public class ItemPedido implements Serializable {
         this.preco = preco;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ItemPedido that = (ItemPedido) o;
+
+        return getId().equals(that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+
+        StringBuffer sb = new StringBuffer();
+
+        sb.append(getProduto().getNome())
+                .append(", Qte: " + getQuantidade())
+                .append(", Preco Unitário: " + numberFormat.format(getPreco()))
+                .append(", Subtotal: " + numberFormat.format(getSubTotal()))
+                .append("\n");
+        return sb.toString();
+    }
 }
