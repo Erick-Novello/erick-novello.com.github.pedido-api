@@ -1,4 +1,4 @@
-package exception;
+package ericknovello.com.github.pedidosapi.exception;
 
 import java.io.Serializable;
 

@@ -1,14 +1,15 @@
 package ericknovello.com.github.pedidosapi.dto;
 
 import ericknovello.com.github.pedidosapi.entity.Cliente;
+import ericknovello.com.github.pedidosapi.validation.ClienteUpdate;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
-//@ClienteUpdate
-public class ClienteDto implements Serializable {
+@ClienteUpdate
+public class ClienteUpdateDto implements Serializable {
 
     private static final long serialVersionUUID = 1L;
 
@@ -22,10 +23,10 @@ public class ClienteDto implements Serializable {
     @Email(message = "Campo E-mail invalido.")
     private String email;
 
-    public ClienteDto() {
+    public ClienteUpdateDto() {
     }
 
-    public ClienteDto(Cliente cliente) {
+    public ClienteUpdateDto(Cliente cliente) {
         this.id = cliente.getId();
         this.nome = cliente.getNome();
         this.email = cliente.getEmail();

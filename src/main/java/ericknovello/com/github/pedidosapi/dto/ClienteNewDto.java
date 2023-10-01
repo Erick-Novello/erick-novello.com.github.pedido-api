@@ -1,12 +1,13 @@
 package ericknovello.com.github.pedidosapi.dto;
 
+import ericknovello.com.github.pedidosapi.validation.ClienteInsert;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
-//@ClienteInsert
+@ClienteInsert
 public class ClienteNewDto implements Serializable {
 
     private static final long serialVersionUUID = 1L;

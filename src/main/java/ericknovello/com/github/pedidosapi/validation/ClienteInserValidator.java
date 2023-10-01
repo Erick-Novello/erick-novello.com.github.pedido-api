@@ -5,7 +5,7 @@ import ericknovello.com.github.pedidosapi.entity.Cliente;
 import ericknovello.com.github.pedidosapi.enums.TipoCliente;
 import ericknovello.com.github.pedidosapi.repository.ClienteRepository;
 import ericknovello.com.github.pedidosapi.util.BR;
-import exception.FieldMessage;
+import ericknovello.com.github.pedidosapi.exception.FieldMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
