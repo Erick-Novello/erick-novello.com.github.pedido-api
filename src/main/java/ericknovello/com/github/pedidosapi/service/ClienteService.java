@@ -32,7 +32,6 @@ public class ClienteService {
                 ", Tipo" + Cliente.class.getName()));
     }
 
-    @Transactional
     public Cliente insert(Cliente cliente) {
         cliente.setId(null);
         Cliente clienteSaved = clienteRepository.save(cliente);
@@ -81,10 +80,10 @@ public class ClienteService {
 
         cliente.getEnderecos().add(endereco);
         cliente.getTelefones().add(clienteNewDto.getTelefone1());
-        if (clienteNewDto.getTelefone2() != null) {
+        if (clienteNewDto.getTelefone2() != null && clienteNewDto.getTelefone2() != "") {
             cliente.getTelefones().add(clienteNewDto.getTelefone2());
         }
-        if (clienteNewDto.getTelefone3() != null) {
+        if (clienteNewDto.getTelefone3() != null && clienteNewDto.getTelefone3() != "") {
             cliente.getTelefones().add(clienteNewDto.getTelefone3());
         }
 

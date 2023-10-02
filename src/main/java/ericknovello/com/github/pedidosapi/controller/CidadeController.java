@@ -1,9 +1,9 @@
 package ericknovello.com.github.pedidosapi.controller;
 
-import ericknovello.com.github.pedidosapi.dto.ClienteNewDto;
-import ericknovello.com.github.pedidosapi.dto.ClienteUpdateDto;
+import ericknovello.com.github.pedidosapi.entity.Cidade;
 import ericknovello.com.github.pedidosapi.entity.Cliente;
-import ericknovello.com.github.pedidosapi.service.ClienteService;
+import ericknovello.com.github.pedidosapi.entity.Estado;
+import ericknovello.com.github.pedidosapi.service.CidadeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,40 +13,38 @@ import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
-@RequestMapping(value = "/clientes")
-public class ClienteController {
+@RequestMapping(value = "/cidades")
+public class CidadeController {
 
     @Autowired
-    private ClienteService clienteService;
+    private CidadeService cidadeService;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Cliente> find(@PathVariable Integer id) {
-        Cliente cliente = clienteService.find(id);
-        return ResponseEntity.ok().body(cliente);
+    public ResponseEntity<Cidade> find(@PathVariable Integer id) {
+        Cidade cidade = cidadeService.find(id);
+        return ResponseEntity.ok().body(cidade);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDto clienteNewDto) {
-        Cliente cliente = clienteService.fromDto(clienteNewDto);
-        cliente = clienteService.insert(cliente);
+    public ResponseEntity<Void> insert(@Valid @RequestBody Cidade cidade) {
+        Cidade newCidade = cidadeService.insert(cidade);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(cliente.getId())
+                .buildAndExpand(newCidade.getId())
                 .toUri();
+
         return ResponseEntity.created(uri).build();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody ClienteUpdateDto clienteUpdateDto) {
-        Cliente cliente = clienteService.fromDto(clienteUpdateDto);
-        cliente.setId(id);
-        clienteService.update(cliente);
+    public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody Cidade cidade) {
+        cidadeService.update(cidade, id);
         return ResponseEntity.noContent().build();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        clienteService.delete(id);
+        cidadeService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
