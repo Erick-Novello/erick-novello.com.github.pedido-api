@@ -13,8 +13,9 @@ import ericknovello.com.github.pedidosapi.repository.EnderecoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.Optional;
 
 @Service
@@ -32,16 +33,32 @@ public class ClienteService {
                 ", Tipo" + Cliente.class.getName()));
     }
 
-    public Cliente insert(Cliente cliente) {
+    public Cliente insert(ClienteNewDto clienteNewDto, String requestURI) {
+        Cliente cliente = fromDto(clienteNewDto);
         cliente.setId(null);
-        Cliente clienteSaved = clienteRepository.save(cliente);
-        enderecoRepository.save(clienteSaved.getEnderecos().get(0));
-        return cliente;
+        Cliente clienteSalvo = clienteRepository.save(cliente);
+        enderecoRepository.save(clienteSalvo.getEnderecos().get(0));
+
+        ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(cliente.getId())
+                .toUri();
+
+        return clienteSalvo;
+//        cliente.setId(null);
+//        Cliente clienteSaved = clienteRepository.save(cliente);
+//        enderecoRepository.save(clienteSaved.getEnderecos().get(0));
+//        return cliente;
     }
 
-    public Cliente update(Cliente cliente) {
-        Cliente clientToUpdate = find(cliente.getId());
-        updateData(clientToUpdate, cliente);
+    //    public Cliente update(Cliente cliente) {
+//        Cliente clientToUpdate = find(cliente.getId());
+//        updateData(clientToUpdate, cliente);
+//        return clienteRepository.save(clientToUpdate);
+//    }
+    public Cliente update(Integer id, ClienteUpdateDto clienteUpdateDto) {
+        Cliente clientToUpdate = find(id);
+        updateData(clientToUpdate, clienteUpdateDto);
         return clienteRepository.save(clientToUpdate);
     }
 
@@ -55,9 +72,13 @@ public class ClienteService {
         }
     }
 
-    private void updateData(Cliente clienteToUpdate, Cliente cliente) {
-        clienteToUpdate.setNome(cliente.getNome());
-        clienteToUpdate.setEmail(cliente.getEmail());
+    //    private void updateData(Cliente clienteToUpdate, Cliente cliente) {
+//        clienteToUpdate.setNome(cliente.getNome());
+//        clienteToUpdate.setEmail(cliente.getEmail());
+//    }
+    private void updateData(Cliente clienteToUpdate, ClienteUpdateDto clienteUpdateDto) {
+        clienteToUpdate.setNome(clienteUpdateDto.getNome());
+        clienteToUpdate.setEmail(clienteUpdateDto.getEmail());
     }
 
     public Cliente fromDto(ClienteNewDto clienteNewDto) {

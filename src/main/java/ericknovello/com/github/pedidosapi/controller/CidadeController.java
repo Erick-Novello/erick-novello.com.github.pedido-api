@@ -1,16 +1,14 @@
 package ericknovello.com.github.pedidosapi.controller;
 
 import ericknovello.com.github.pedidosapi.entity.Cidade;
-import ericknovello.com.github.pedidosapi.entity.Cliente;
-import ericknovello.com.github.pedidosapi.entity.Estado;
 import ericknovello.com.github.pedidosapi.service.CidadeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/cidades")
@@ -26,15 +24,21 @@ public class CidadeController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Void> insert(@Valid @RequestBody Cidade cidade) {
-        Cidade newCidade = cidadeService.insert(cidade);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(newCidade.getId())
-                .toUri();
-
-        return ResponseEntity.created(uri).build();
+    public ResponseEntity<Void> insert(@Valid @RequestBody Cidade cidade, HttpServletRequest request) {
+        cidadeService.insert(cidade, request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+//    @RequestMapping(method = RequestMethod.POST)
+//    public ResponseEntity<Void> insert(@Valid @RequestBody Cidade cidade) {
+//        Cidade newCidade = cidadeService.insert(cidade);
+//        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+//                .path("/{id}")
+//                .buildAndExpand(newCidade.getId())
+//                .toUri();
+//
+//        return ResponseEntity.created(uri).build();
+//    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody Cidade cidade) {
