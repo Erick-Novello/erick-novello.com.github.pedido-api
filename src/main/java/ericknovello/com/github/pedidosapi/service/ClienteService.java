@@ -13,9 +13,11 @@ import ericknovello.com.github.pedidosapi.repository.EnderecoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,39 +29,33 @@ public class ClienteService {
     @Autowired
     private EnderecoRepository enderecoRepository;
 
+    public List<Cliente> findAll(){
+        return clienteRepository.findAll();
+    }
+
     public Cliente find(Integer id) {
         Optional<Cliente> cliente = clienteRepository.findById(id);
         return cliente.orElseThrow(() -> new ObjectNotFoundException("Objeto nao encontrado! Id: " + id +
                 ", Tipo" + Cliente.class.getName()));
     }
 
-    public Cliente insert(ClienteNewDto clienteNewDto, String requestURI) {
+    @Transactional
+    public URI insert(ClienteNewDto clienteNewDto) {
         Cliente cliente = fromDto(clienteNewDto);
-        cliente.setId(null);
+
         Cliente clienteSalvo = clienteRepository.save(cliente);
         enderecoRepository.save(clienteSalvo.getEnderecos().get(0));
 
-        ServletUriComponentsBuilder.fromCurrentRequest()
+        return ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(cliente.getId())
                 .toUri();
-
-        return clienteSalvo;
-//        cliente.setId(null);
-//        Cliente clienteSaved = clienteRepository.save(cliente);
-//        enderecoRepository.save(clienteSaved.getEnderecos().get(0));
-//        return cliente;
     }
 
-    //    public Cliente update(Cliente cliente) {
-//        Cliente clientToUpdate = find(cliente.getId());
-//        updateData(clientToUpdate, cliente);
-//        return clienteRepository.save(clientToUpdate);
-//    }
-    public Cliente update(Integer id, ClienteUpdateDto clienteUpdateDto) {
+    public void update(Integer id, ClienteUpdateDto clienteUpdateDto) {
         Cliente clientToUpdate = find(id);
         updateData(clientToUpdate, clienteUpdateDto);
-        return clienteRepository.save(clientToUpdate);
+        clienteRepository.save(clientToUpdate);
     }
 
     public void delete(Integer id) {
@@ -72,10 +68,6 @@ public class ClienteService {
         }
     }
 
-    //    private void updateData(Cliente clienteToUpdate, Cliente cliente) {
-//        clienteToUpdate.setNome(cliente.getNome());
-//        clienteToUpdate.setEmail(cliente.getEmail());
-//    }
     private void updateData(Cliente clienteToUpdate, ClienteUpdateDto clienteUpdateDto) {
         clienteToUpdate.setNome(clienteUpdateDto.getNome());
         clienteToUpdate.setEmail(clienteUpdateDto.getEmail());
@@ -109,16 +101,6 @@ public class ClienteService {
         }
 
         return cliente;
-    }
-
-    public Cliente fromDto(ClienteUpdateDto clienteUpdateDto) {
-        return new Cliente(
-                clienteUpdateDto.getId(),
-                clienteUpdateDto.getNome(),
-                clienteUpdateDto.getEmail(),
-                null,
-                null,
-                null);
     }
 
 }

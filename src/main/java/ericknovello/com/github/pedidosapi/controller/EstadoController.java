@@ -1,18 +1,14 @@
 package ericknovello.com.github.pedidosapi.controller;
 
-import ericknovello.com.github.pedidosapi.dto.ClienteUpdateDto;
-import ericknovello.com.github.pedidosapi.entity.Cliente;
 import ericknovello.com.github.pedidosapi.entity.Estado;
 import ericknovello.com.github.pedidosapi.service.EstadoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/estados")
@@ -21,6 +17,12 @@ public class EstadoController {
     @Autowired
     private EstadoService estadoService;
 
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<List<Estado>> findAll() {
+        List<Estado> listEstado = estadoService.findAll();
+        return ResponseEntity.ok().body(listEstado);
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Estado> find(@PathVariable Integer id) {
         Estado estado = estadoService.find(id);
@@ -28,21 +30,10 @@ public class EstadoController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Void> insert(@Valid @RequestBody Estado estado, HttpServletRequest request) {
-        estadoService.insert(estado, request.getRequestURI());
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<Void> insert(@Valid @RequestBody Estado estado) {
+        URI uri = estadoService.insert(estado);
+        return ResponseEntity.created(uri).build();
     }
-
-//    @RequestMapping(method = RequestMethod.POST)
-//    public ResponseEntity<Void> insert(@Valid @RequestBody Estado estado) {
-//        Estado newEstado = estadoService.insert(estado);
-//        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-//                .path("/{id}")
-//                .buildAndExpand(newEstado.getId())
-//                .toUri();
-//
-//        return ResponseEntity.created(uri).build();
-//    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody Estado estado) {

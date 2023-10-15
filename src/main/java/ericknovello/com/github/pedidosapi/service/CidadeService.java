@@ -1,6 +1,7 @@
 package ericknovello.com.github.pedidosapi.service;
 
 import ericknovello.com.github.pedidosapi.entity.Cidade;
+import ericknovello.com.github.pedidosapi.entity.Cliente;
 import ericknovello.com.github.pedidosapi.exception.ObjectNotFoundException;
 import ericknovello.com.github.pedidosapi.repository.CidadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,6 +18,10 @@ public class CidadeService {
     @Autowired
     private CidadeRepository cidadeRepository;
 
+    public List<Cidade> findAll(){
+        return cidadeRepository.findAll();
+    }
+
     public Cidade find(Integer id) {
         Optional<Cidade> cidade = cidadeRepository.findById(id);
 
@@ -23,23 +29,20 @@ public class CidadeService {
                 ", Tipo" + Cidade.class.getName()));
     }
 
-    public Cidade insert(Cidade cidade, String requestURI) {
+    public URI insert(Cidade cidade) {
 
-        ServletUriComponentsBuilder.fromCurrentRequest()
+        Cidade newCidade = cidadeRepository.save(cidade);
+
+        return ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(cidade.getId())
+                .buildAndExpand(newCidade.getId())
                 .toUri();
-        return cidadeRepository.save(cidade);
     }
 
-//    public Cidade insert(Cidade cidade) {
-//        return cidadeRepository.save(cidade);
-//    }
-
-    public Cidade update(Cidade cidade, Integer id) {
+    public void update(Cidade cidade, Integer id) {
         find(id);
         cidade.setId(id);
-        return cidadeRepository.save(cidade);
+        cidadeRepository.save(cidade);
     }
 
     public void delete(Integer id) {

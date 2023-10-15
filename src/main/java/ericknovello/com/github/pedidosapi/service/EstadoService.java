@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,6 +17,20 @@ public class EstadoService {
     @Autowired
     private EstadoRepository estadoRepository;
 
+    public List<Estado> findAll(){
+        return estadoRepository.findAll();
+    }
+
+    public URI insert(Estado estado) {
+
+        Estado newEstado = estadoRepository.save(estado);
+
+        return ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(newEstado.getId())
+                .toUri();
+    }
+
     public Estado find(Integer id) {
         Optional<Estado> estado = estadoRepository.findById(id);
 
@@ -23,23 +38,10 @@ public class EstadoService {
                 ", Tipo" + Estado.class.getName()));
     }
 
-//    public Estado insert(Estado estado, String requestURI) {
-//        return estadoRepository.save(estado);
-//    }
-
-    public Estado insert(Estado estado, String requestURI) {
-        ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(estado.getId())
-                .toUri();
-
-        return estadoRepository.save(estado);
-    }
-
-    public Estado update(Estado estado, Integer id) {
+    public void update(Estado estado, Integer id) {
         find(id);
         estado.setId(id);
-        return estadoRepository.save(estado);
+        estadoRepository.save(estado);
     }
 
     public void delete(Integer id) {
