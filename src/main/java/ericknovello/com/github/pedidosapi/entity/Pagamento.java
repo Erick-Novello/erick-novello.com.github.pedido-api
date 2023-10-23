@@ -1,6 +1,7 @@
 package ericknovello.com.github.pedidosapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import ericknovello.com.github.pedidosapi.enums.EstadoPagamento;
 
@@ -10,9 +11,13 @@ import java.io.Serializable;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = PagamentoComBoleto.class, name = "pagamentoComBoleto"),
+        @JsonSubTypes.Type(value = PagamentoComCartao.class, name = "pagamentoComCartao")
+})
 public abstract class Pagamento implements Serializable {
 
-    private static final long serialVerionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;

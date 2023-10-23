@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 public class Produto  implements Serializable {
 
-    private static final long serialVersionUUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,8 +32,8 @@ public class Produto  implements Serializable {
     inverseJoinColumns = @JoinColumn(name = "categoria_id")
     )
     private List<Categoria> categorias = new ArrayList<>();
-
     @OneToMany(mappedBy = "id.produto")
+    @JsonIgnore
     private Set<ItemPedido> itens = new HashSet<>();
 
     public Produto() {
